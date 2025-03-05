@@ -18,7 +18,6 @@ interface TaskFormValues {
 
 const TaskForm = () => {
   const [form] = Form.useForm();
-  // Инициализируем token с пустой строкой и сразу как контролируемый
   const [token, setToken] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('token') || '';
@@ -28,8 +27,6 @@ const TaskForm = () => {
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Убираем useEffect, так как инициализация теперь в начальном состоянии
-  // Добавляем только синхронизацию с localStorage при изменении token
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', token);
@@ -39,13 +36,6 @@ const TaskForm = () => {
   const onFinish = async (values: TaskFormValues) => {
     setLoading(true);
     try {
-      const rules = {
-        budget_from: 5000,
-        budget_to: 8000,
-        deadline_days: 5,
-        qty_freelancers: 1
-      };
-
       const params = new URLSearchParams({
         token,
         title: values.title,
@@ -56,7 +46,6 @@ const TaskForm = () => {
         deadline: values.deadline_days.toString(),
         reminds: values.number_of_reminders?.toString() || '0',
         all_auto_responses: values.all_auto_responses?.toString() || 'false',
-        rules: JSON.stringify(rules)
       });
 
       const url = `https://deadlinetaskbot.productlove.ru/api/v1/tasks/client/newhardtask?${params.toString()}`;
